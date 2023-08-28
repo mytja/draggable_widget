@@ -1,5 +1,6 @@
 library draggable_widget;
 
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -125,6 +126,9 @@ class _DraggableWidgetState extends State<DraggableWidget>
 
   bool get currentVisibilty => visible ?? widget.intialVisibility;
 
+  bool disableMoving =
+      Platform.isAndroid || Platform.isIOS || Platform.isFuchsia;
+
   bool isStillTouching = false;
 
   @override
@@ -186,6 +190,9 @@ class _DraggableWidgetState extends State<DraggableWidget>
           top = widget.topMargin;
           left = 0;
         }
+
+        hardTop = top;
+        hardLeft = left;
       });
     });
 
@@ -235,6 +242,8 @@ class _DraggableWidgetState extends State<DraggableWidget>
             ? Container()
             : Listener(
                 onPointerUp: (v) {
+                  if (disableMoving) return;
+
                   if (!isStillTouching) {
                     return;
                   }
@@ -247,11 +256,15 @@ class _DraggableWidgetState extends State<DraggableWidget>
                   });
                 },
                 onPointerDown: (v) async {
+                  if (disableMoving) return;
+
                   isStillTouching = false;
                   await Future.delayed(widget.touchDelay);
                   isStillTouching = true;
                 },
                 onPointerMove: (v) async {
+                  if (disableMoving) return;
+
                   if (!isStillTouching) {
                     return;
                   }
