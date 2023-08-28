@@ -158,38 +158,37 @@ class _DraggableWidgetState extends State<DraggableWidget>
 
     widget.dragController?._addState(this);
 
-    if (WidgetsBinding.instance != null) {
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-        final widgetSize = getWidgetSize(key);
-        if (widgetSize != null) {
-          setState(() {
-            widgetHeight = widgetSize.height;
-            widgetWidth = widgetSize.width;
-          });
-        }
-
-        await Future.delayed(Duration(
-          milliseconds: 100,
-        ));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      final widgetSize = getWidgetSize(key);
+      if (widgetSize != null) {
         setState(() {
-          offstage = false;
-          boundary = MediaQuery.of(context).size.height - widget.bottomMargin;
-          if (widget.initialPosition == AnchoringPosition.bottomRight) {
-            top = boundary - widgetHeight + widget.statusBarHeight;
-            left = MediaQuery.of(context).size.width - widgetWidth;
-          } else if (widget.initialPosition == AnchoringPosition.bottomLeft) {
-            top = boundary - widgetHeight + widget.statusBarHeight;
-            left = 0;
-          } else if (widget.initialPosition == AnchoringPosition.topRight) {
-            top = widget.topMargin - widget.topMargin;
-            left = MediaQuery.of(context).size.width - widgetWidth;
-          } else {
-            top = widget.topMargin;
-            left = 0;
-          }
+          widgetHeight = widgetSize.height;
+          widgetWidth = widgetSize.width;
         });
+      }
+
+      await Future.delayed(Duration(
+        milliseconds: 100,
+      ));
+      setState(() {
+        offstage = false;
+        boundary = MediaQuery.of(context).size.height - widget.bottomMargin;
+        if (widget.initialPosition == AnchoringPosition.bottomRight) {
+          top = boundary - widgetHeight + widget.statusBarHeight;
+          left = MediaQuery.of(context).size.width - widgetWidth;
+        } else if (widget.initialPosition == AnchoringPosition.bottomLeft) {
+          top = boundary - widgetHeight + widget.statusBarHeight;
+          left = 0;
+        } else if (widget.initialPosition == AnchoringPosition.topRight) {
+          top = widget.topMargin - widget.topMargin;
+          left = MediaQuery.of(context).size.width - widgetWidth;
+        } else {
+          top = widget.topMargin;
+          left = 0;
+        }
       });
-    }
+    });
+
     super.initState();
   }
 
@@ -202,7 +201,7 @@ class _DraggableWidgetState extends State<DraggableWidget>
   @override
   void didUpdateWidget(DraggableWidget oldWidget) {
     if (!offstage) {
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         final widgetSize = getWidgetSize(key);
         if (widgetSize != null) {
           setState(() {
@@ -220,9 +219,8 @@ class _DraggableWidgetState extends State<DraggableWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: top,
-      left: left,
+    return Padding(
+      padding: EdgeInsets.fromLTRB(left, top, 0, 0),
       child: AnimatedSwitcher(
         duration: Duration(
           milliseconds: 150,
@@ -284,24 +282,21 @@ class _DraggableWidgetState extends State<DraggableWidget>
                       vertical: widget.verticalSpace,
                     ),
                     child: AnimatedContainer(
-                        duration: Duration(milliseconds: 150),
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(widget.shadowBorderRadius),
-                          boxShadow: [
-                            dragging
-                                ? widget.draggingShadow
-                                : widget.normalShadow
-                            // BoxShadow(
-                            //   color: Colors.black38,
-                            //   offset: dragging ? Offset(0, 10) : Offset(0, 4),
-                            //   blurRadius: dragging ? 10 : 2,
-                            // )
-                          ],
-                        ),
-                        child: Transform.scale(
-                            scale: dragging ? widget.dragAnimationScale : 1,
-                            child: widget.child)),
+                      duration: Duration(milliseconds: 150),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(widget.shadowBorderRadius),
+                        boxShadow: [
+                          dragging ? widget.draggingShadow : widget.normalShadow
+                          // BoxShadow(
+                          //   color: Colors.black38,
+                          //   offset: dragging ? Offset(0, 10) : Offset(0, 4),
+                          //   blurRadius: dragging ? 10 : 2,
+                          // )
+                        ],
+                      ),
+                      child: widget.child,
+                    ),
                   ),
                 ),
               ),

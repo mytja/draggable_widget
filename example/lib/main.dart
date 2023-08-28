@@ -51,19 +51,19 @@ class MyHomePage extends StatelessWidget {
             color: Colors.green,
           ),
           DraggableWidget(
-            child: Container(
-              height: 100,
-              width: 200,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Stack(
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  IconButton(icon: Icon(Icons.close), onPressed: () {})
+                  ...List.generate(100, (int index) => index)
+                      .map((e) => Container(
+                            width: 100,
+                            height: 100,
+                            color: e % 2 == 0 ? Colors.blue : Colors.green,
+                          )),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
