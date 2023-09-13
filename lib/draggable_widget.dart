@@ -138,6 +138,7 @@ class _DraggableWidgetState extends State<DraggableWidget>
 
   @override
   void initState() {
+    print("[DRAGGABLE] Moving is ${disableMoving ? "disabled" : "enabled"}");
     currentlyDocked = widget.initialPosition;
     hardTop = widget.topMargin;
     animationController = AnimationController(
