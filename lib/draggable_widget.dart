@@ -10,9 +10,8 @@ import 'model/anchor_docker.dart';
 
 export 'model/anchor_docker.dart';
 
-final isWebMobile = kIsWeb &&
-    (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.android);
+final isWebMobile = (defaultTargetPlatform == TargetPlatform.iOS ||
+    defaultTargetPlatform == TargetPlatform.android);
 
 class DraggableWidget extends StatefulWidget {
   /// The widget that will be displayed as dragging widget
@@ -131,8 +130,8 @@ class _DraggableWidgetState extends State<DraggableWidget>
 
   bool get currentVisibilty => visible ?? widget.intialVisibility;
 
-  bool disableMoving =
-      Platform.isAndroid || Platform.isIOS || Platform.isFuchsia || isWebMobile;
+  bool disableMoving = (kIsWeb && isWebMobile) ||
+      (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia));
 
   bool isStillTouching = false;
 
